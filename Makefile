@@ -1,0 +1,3 @@
+execute:
+	clear
+	./main.py
