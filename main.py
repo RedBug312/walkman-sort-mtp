@@ -10,7 +10,7 @@ tag_getter = {
     'n': lambda audio: audio['tags'].track_num[0] or 0
 }
 
-def search_audios(scrdir):
+def search_audios(srcdir, order):
     audiopaths = [os.path.join(root, f) for root, dirs, files in os.walk(srcdir)
                                         for f in files
                                         if os.path.splitext(f)[1] in ('.mp3', '.MP3')]
@@ -19,7 +19,7 @@ def search_audios(scrdir):
                 for path in audiopaths]
 
     reverse = False
-    for tag in tag_order[::-1]:
+    for tag in order[::-1]:
         if tag == '-':
             reverse = True
         elif tag not in tag_getter:
@@ -44,7 +44,7 @@ def choose_device():
 def upload(audiolist, device, srcdir, dstdir):
     dev = device.open()
 
-    pbar = tqdm.tqdm(audiolist, bar_format='[{n_fmt}/{total_fmt}] {desc}Uploading')
+    pbar = tqdm.tqdm(audiolist, bar_format='[{n_fmt}/{total_fmt}] {desc}Uploading ')
     for audio in pbar:
         srcpath = os.path.join(srcdir, audio['path'])
         dstpath = os.path.join(dstdir, audio['path'])
@@ -56,17 +56,14 @@ def upload(audiolist, device, srcdir, dstdir):
 
         curr = dev
         for segment in dstpath.split('/')[1:-1]:
-            curr._ensure_got_children()
-            if segment in curr.children_by_name:
-                curr = curr.children_by_name[segment]
-            else:
+            curr = curr.get_child_by_name(segment)
+            if curr is None:
                 curr = curr.create_folder(segment)
         curr.send_file(srcpath)
 
     dev.close()
 
-
-if __name__ == '__main__':
+def main():
     import sys
     import getopt
 
@@ -77,10 +74,10 @@ if __name__ == '__main__':
         print('Invalid options')
         sys.exit(1)
 
-    tag_order = 'aAn'
+    sort = 'aAn'
     for opt, val in opts:
         if opt in ('-s', '--sort'):
-            tag_order = val
+            sort = val
 
     try:
         assert args[1].startswith('mtp:/')
@@ -91,7 +88,10 @@ if __name__ == '__main__':
         srcdir = os.path.expanduser(args[0])
         dstdir = args[1][4:]
 
-    audiolist = search_audios(srcdir)
+    audiolist = search_audios(srcdir, sort)
     device = choose_device()
     upload(audiolist, device, srcdir, dstdir)
 
+
+if __name__ == '__main__':
+    main()
