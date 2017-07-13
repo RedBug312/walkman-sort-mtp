@@ -1,3 +1,3 @@
 execute:
 	clear
-	./main.py
+	./main.py ./test mtp:/songs -s aAn
