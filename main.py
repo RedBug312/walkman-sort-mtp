@@ -1,4 +1,9 @@
 #! /usr/bin/python3
+"""! @package walkmansortmtp
+@file main.py
+@author RedBug312
+@date Jul 2017
+"""
 import os
 import eyed3
 import lib.mtpy as mtpy
@@ -11,6 +16,10 @@ _OPTION = {
 }
 
 def search_audios(srcdir):
+    """! Search all audio files (*.mp3) under the folder.
+    @param srcdir the folder to search from
+    @return all audio files listed in given order
+    """
     audiopaths = [os.path.join(root, f) for root, dirs, files in os.walk(srcdir)
                                         for f in files
                                         if os.path.splitext(f)[1] in ('.mp3', '.MP3')]
@@ -36,6 +45,9 @@ def search_audios(srcdir):
 
 
 def choose_device():
+    """! An interactive CLI interface only ask user to choose the device.
+    @return the chosen raw device
+    """
     raw_devs = mtpy.get_raw_devices()
     for index, raw_dev in enumerate(raw_devs):
         print('Device {}: {}'.format(index, repr(raw_dev)))
@@ -47,7 +59,16 @@ def choose_device():
 
 
 def upload(audiolist, device, srcdir, dstdir):
+    """! Upload all the audio files to device.
+    The path follows: /SRCDIR/path/to/audio.mp3 -> /DSTDIR/path/to/audio.mp3
+    @param audiolist the audio files to upload
+    @param device the raw device to upload to
+    @param srcdir the base folder in local to upload from
+    @param dstdir the base folder in device to upload to
+    @return the sum of files uploaded successfully
+    """
     dev = device.open()
+    success_num = 0
 
     pbar = tqdm.tqdm(audiolist)
     for audio in pbar:
@@ -70,12 +91,18 @@ def upload(audiolist, device, srcdir, dstdir):
                 curr = curr.create_folder(folder)
             else:
                 curr = nex4
-        curr.send_file(srcpath)
+
+        if curr.send_file(srcpath) is not None:
+            success_num += 1
 
     dev.close()
+    return success_num
 
 
 def main():
+    """! The entry point.
+    Helps receiving the options and arguments.
+    """
     import sys
     import getopt
 
