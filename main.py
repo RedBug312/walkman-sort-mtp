@@ -4,11 +4,6 @@ import eyed3
 import lib.mtpy as mtpy
 import tqdm
 
-tag_getter = {
-    'a': lambda audio: audio['tags'].artist or '',
-    'A': lambda audio: audio['tags'].album or '',
-    'n': lambda audio: audio['tags'].track_num[0] or 0
-}
 
 def search_audios(srcdir, order):
     audiopaths = [os.path.join(root, f) for root, dirs, files in os.walk(srcdir)
@@ -18,6 +13,11 @@ def search_audios(srcdir, order):
                   'tags': eyed3.load(path).tag }
                 for path in audiopaths]
 
+    tag_getter = {
+        'a': lambda audio: audio['tags'].artist or '',
+        'A': lambda audio: audio['tags'].album or '',
+        'n': lambda audio: audio['tags'].track_num[0] or 0
+    }
     reverse = False
     for tag in order[::-1]:
         if tag == '-':
@@ -44,7 +44,7 @@ def choose_device():
 def upload(audiolist, device, srcdir, dstdir):
     dev = device.open()
 
-    pbar = tqdm.tqdm(audiolist, bar_format='[{n_fmt}/{total_fmt}] {desc}Uploading ')
+    pbar = tqdm.tqdm(audiolist)
     for audio in pbar:
         srcpath = os.path.join(srcdir, audio['path'])
         dstpath = os.path.join(dstdir, audio['path'])
@@ -55,13 +55,14 @@ def upload(audiolist, device, srcdir, dstdir):
             existed.delete()
 
         curr = dev
-        for segment in dstpath.split('/')[1:-1]:
-            curr = curr.get_child_by_name(segment)
+        for folder in dstpath.split('/')[1:-1]:
+            curr = curr.get_child_by_name(folder)
             if curr is None:
-                curr = curr.create_folder(segment)
+                curr = curr.create_folder(folder)
         curr.send_file(srcpath)
 
     dev.close()
+
 
 def main():
     import sys
