@@ -4,8 +4,13 @@ import eyed3
 import lib.mtpy as mtpy
 import tqdm
 
+# default options
+_OPTION = {
+    'sort': 'aAn',
+    'force': 0,
+}
 
-def search_audios(srcdir, order):
+def search_audios(srcdir):
     audiopaths = [os.path.join(root, f) for root, dirs, files in os.walk(srcdir)
                                         for f in files
                                         if os.path.splitext(f)[1] in ('.mp3', '.MP3')]
@@ -19,7 +24,7 @@ def search_audios(srcdir, order):
         'n': lambda audio: audio['tags'].track_num[0] or 0
     }
     reverse = False
-    for tag in order[::-1]:
+    for tag in _OPTION['sort'][::-1]:
         if tag == '-':
             reverse = True
         elif tag not in tag_getter:
@@ -51,14 +56,20 @@ def upload(audiolist, device, srcdir, dstdir):
         pbar.set_description(dstpath)
 
         existed = dev.get_descendant_by_path(dstpath)
-        if existed is not None:
+        if _OPTION['force'] == 1 and existed is None:
+            _OPTION['force'] = 2
+        elif _OPTION['force'] == 2 and existed is not None:
             existed.delete()
+        elif existed is not None:
+            continue
 
         curr = dev
         for folder in dstpath.split('/')[1:-1]:
-            curr = curr.get_child_by_name(folder)
+            nex4 = curr.get_child_by_name(folder)
             if curr is None:
                 curr = curr.create_folder(folder)
+            else:
+                curr = nex4
         curr.send_file(srcpath)
 
     dev.close()
@@ -69,16 +80,18 @@ def main():
     import getopt
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:],
-                     '-s', ['sort='])
+        opts, args = getopt.getopt(sys.argv[1:], 's:fF', ['sort=', 'force-after', 'force-all'])
     except getopt.GetoptError:
         print('Invalid options')
         sys.exit(1)
-
-    sort = 'aAn'
-    for opt, val in opts:
-        if opt in ('-s', '--sort'):
-            sort = val
+    else:
+        for opt, val in opts:
+            if opt in ('-s', '--sort'):
+                _OPTION['sort'] = val
+            elif opt in ('-f', '--force-after'):
+                _OPTION['force'] = 1
+            elif opt in ('-F', '--force-all'):
+                _OPTION['force'] = 2
 
     try:
         assert args[1].startswith('mtp:/')
@@ -89,7 +102,7 @@ def main():
         srcdir = os.path.expanduser(args[0])
         dstdir = args[1][4:]
 
-    audiolist = search_audios(srcdir, sort)
+    audiolist = search_audios(srcdir)
     device = choose_device()
     upload(audiolist, device, srcdir, dstdir)
 
