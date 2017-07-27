@@ -18,6 +18,7 @@ Options:
 * `-n`, `--no`: print the order of the files but not upload (not implemented)
 * `-f`, `--force-after`: overwrite songs on device after new songs
 * `-F`, `--force-all`: overwrite all songs on device
+* `-d`, `--delete`: delete the folder on device first (not implemented)
 
 You can run `$ ./upload.py -h` for more detailed options explaination.
 
