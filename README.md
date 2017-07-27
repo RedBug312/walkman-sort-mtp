@@ -1,9 +1,10 @@
 # walkman-sort-mtp
-A python script that transfer sorted MP3 audio files via MTP
+A python script to upload sorted MP3 audio files via MTP
 
 ## Intro
 My Walkman MP3 player (Sony NWZ-B163F) failed reading ID3 tags, the songs inside can only be sorted as uploading order. I have to upload them one-by-one since Bash script does not work on MTP.
-For this situation, this script will uploads all the MP3 audio files in your Music folder, sorting by ID3 tags in the audio files.
+
+For this situation, this script will uploads all the MP3 audio files in your Music folder, which are already sorted by ID3 tags in the audio files.
 
 ## Usage
 
@@ -42,7 +43,6 @@ Try this in a terminal:
 $ killall gvfs-gphoto2-volume-monitor
 $ killall gvfs-mtp-volume-monitor
 ```
-
 You can find the reference [here](https://bugs.launchpad.net/ubuntu/+source/gvfs/+bug/1314556u).
 
 ## Credits
