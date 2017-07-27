@@ -20,7 +20,7 @@ def search_audios(srcdir):
     @param srcdir the folder to search from
     @return all audio files listed in given order
     """
-    audiopaths = [os.path.join(root, f) for root, dirs, files in os.walk(srcdir)
+    audiopaths = [os.path.join(root, f) for root, _, files in os.walk(srcdir)
                                         for f in files
                                         if os.path.splitext(f)[1] in ('.mp3', '.MP3')]
     audiolist = [{'path': os.path.relpath(path, srcdir),
@@ -87,7 +87,7 @@ def upload(audiolist, device, srcdir, dstdir):
         curr = dev
         for folder in dstpath.split('/')[1:-1]:
             nex4 = curr.get_child_by_name(folder)
-            if curr is None:
+            if nex4 is None:
                 curr = curr.create_folder(folder)
             else:
                 curr = nex4
