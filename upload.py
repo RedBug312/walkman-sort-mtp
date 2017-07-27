@@ -11,7 +11,7 @@ import tqdm
 
 # default options
 _OPTION = {
-    'sort': 'aAn',
+    'sort': 'aGYAn',
     'force': 0,
 }
 
@@ -30,7 +30,14 @@ def search_audios(srcdir):
     tag_getter = {
         'a': lambda audio: audio['tags'].artist or '',
         'A': lambda audio: audio['tags'].album or '',
-        'n': lambda audio: audio['tags'].track_num[0] or 0
+        'b': lambda audio: audio['tags'].album_artist or '',
+        't': lambda audio: audio['tags'].title or '',
+        'n': lambda audio: audio['tags'].track_num[0] or 0,
+        'N': lambda audio: audio['tags'].track_num[1] or 0,
+        'd': lambda audio: audio['tags'].disc_num[0] or 0,
+        'D': lambda audio: audio['tags'].disc_num[1] or 0,
+        'G': lambda audio: audio['tags'].genre or 0,
+        'Y': lambda audio: audio['tags'].getBestDate() or None,
     }
     reverse = False
     for tag in _OPTION['sort'][::-1]:
