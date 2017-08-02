@@ -16,13 +16,25 @@ $ ./upload.py [options] <SOURCE_DIR> <DEVICE_DIR>
 Note that `<DEVICE_DIR>` should be started with `mtp:/` as its root directory.
 
 Options:
-* `-s`, `--sort`: sorting criteria with same denotations as eyed3, default is `aAn`
-* `-n`, `--no`: print the order of the files but not upload (not implemented)
-* `-f`, `--force-after`: overwrite songs on device after new songs
+* `-s`, `--sort`: order of sorting criteria [default: bGYAn]
+* `-n`, `--no`: print the order of the files, but not upload them
+* `-f`, `--force-after`: overwrite songs on device after new songs uploaded
 * `-F`, `--force-all`: overwrite all songs on device
-* `-d`, `--delete`: delete the folder on device first (not implemented)
 
-You can run `$ ./upload.py -h` for a more detailed options explaination.
+Sorting criteria:
+* `a`: artist name
+* `A`: album name
+* `b`: album artist name
+* `t`: track title
+* `n`: track number
+* `N`: total number of tracks
+* `d`: disc number
+* `D`: total number of discs in set
+* `G`: genre id
+* `Y`: releasing year
+* `-`: reverse the order of previous criteria
+
+You can run `$ ./upload.py --help` for a more detailed options explaination.
 
 Demo:
 [![asciicast](https://asciinema.org/a/0IvJu8h9RHpYABqFgamSFEBQt.png)](https://asciinema.org/a/0IvJu8h9RHpYABqFgamSFEBQt)
