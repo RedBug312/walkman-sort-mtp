@@ -9,11 +9,7 @@ import eyed3
 import lib.mtpy as mtpy
 import tqdm
 
-# default options
-_OPTION = {
-    'sort': 'aGYAn',
-    'force': 0,
-}
+__version__ = '1.0'
 
 def search_audios(srcdir):
     """! Search all audio files (*.mp3) under the folder.
@@ -40,7 +36,7 @@ def search_audios(srcdir):
         'Y': lambda audio: audio['tags'].getBestDate() or None,
     }
     reverse = False
-    for tag in _OPTION['sort'][::-1]:
+    for tag in OPTS.sort[::-1]:
         if tag == '-':
             reverse = True
         elif tag not in tag_getter:
@@ -84,9 +80,9 @@ def upload(audiolist, device, srcdir, dstdir):
         pbar.set_description(dstpath)
 
         existed = dev.get_descendant_by_path(dstpath)
-        if _OPTION['force'] == 1 and existed is None:
-            _OPTION['force'] = 2
-        elif _OPTION['force'] == 2 and existed is not None:
+        if OPTS.force == 1 and existed is None:
+            OPTS.force = 2
+        elif OPTS.force == 2 and existed is not None:
             existed.delete()
         elif existed is not None:
             continue
@@ -94,10 +90,7 @@ def upload(audiolist, device, srcdir, dstdir):
         curr = dev
         for folder in dstpath.split('/')[1:-1]:
             nex4 = curr.get_child_by_name(folder)
-            if nex4 is None:
-                curr = curr.create_folder(folder)
-            else:
-                curr = nex4
+            curr = curr.create_folder(folder) if nex4 is None else nex4
 
         if curr.send_file(srcpath) is not None:
             success_num += 1
@@ -110,31 +103,33 @@ def main():
     """! The entry point.
     Helps receiving the options and arguments.
     """
-    import sys
-    import getopt
+    from optparse import OptionParser
 
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], 's:fF', ['sort=', 'force-after', 'force-all'])
-    except getopt.GetoptError:
-        print('Invalid options')
-        sys.exit(1)
-    else:
-        for opt, val in opts:
-            if opt in ('-s', '--sort'):
-                _OPTION['sort'] = val
-            elif opt in ('-f', '--force-after'):
-                _OPTION['force'] = 1
-            elif opt in ('-F', '--force-all'):
-                _OPTION['force'] = 2
+    parser = OptionParser(usage='%prog [options] SOURCE_DIR DEVICE_DIR',
+                          version='%prog ' + __version__,
+                          epilog='For detailed information, see https://github.com/RedBug312/walkman-sort-mtp')
+    parser.add_option('-s', '--sort', metavar='SORT',
+                      type='string', dest='sort', default='bGYAn',
+                      help='order of sorting criteria [default: bGYAn]')
+    parser.add_option('-n', '--no-action',
+                      action='store_true', dest='display',
+                      help='print the order of the files, but not upload them')
+    parser.add_option('-f', '--force-after',
+                      action='store_const', const=1, dest='force',
+                      help='overwrite songs on device after new songs uploaded')
+    parser.add_option('-F', '--force-all',
+                      action='store_const', const=2, dest='force',
+                      help='overwrite all songs on device')
+    global OPTS
+    OPTS, ARGS = parser.parse_args()
 
-    try:
-        assert args[1].startswith('mtp:/')
-    except (IndexError, AssertionError):
-        print('Invalid paths')
-        sys.exit(1)
+    if len(ARGS) != 2:
+        parser.error('incorrect number of arguments (must be 2)')
+    elif not ARGS[1].startswith('mtp:/'):
+        parser.error('DEVICE_DIR should be start with “mtp:/” as its root')
     else:
-        srcdir = os.path.expanduser(args[0])
-        dstdir = args[1][4:]
+        srcdir = os.path.expanduser(ARGS[0])
+        dstdir = ARGS[1][4:]
 
     audiolist = search_audios(srcdir)
     device = choose_device()
