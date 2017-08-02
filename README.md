@@ -21,7 +21,7 @@ Options:
 * `-f`, `--force-after`: overwrite songs on device after new songs uploaded
 * `-F`, `--force-all`: overwrite all songs on device
 
-Sorting criteria:
+Sorting criteria: (the same as eyeD3)
 * `a`: artist name
 * `A`: album name
 * `b`: album artist name
@@ -55,7 +55,7 @@ Try this in a terminal:
 $ killall gvfs-gphoto2-volume-monitor
 $ killall gvfs-mtp-volume-monitor
 ```
-You can find the reference [here](https://bugs.launchpad.net/ubuntu/+source/gvfs/+bug/1314556u).
+And plug-in your device again. The reference is [here](https://bugs.launchpad.net/ubuntu/+source/gvfs/+bug/1314556u).
 
 ## Credits
 * [eyeD3](http://eyed3.nicfit.net/), Python audio data toolkit.
