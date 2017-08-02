@@ -55,7 +55,7 @@ Try this in a terminal:
 $ killall gvfs-gphoto2-volume-monitor
 $ killall gvfs-mtp-volume-monitor
 ```
-And plug-in your device again. The reference is [here](https://bugs.launchpad.net/ubuntu/+source/gvfs/+bug/1314556u).
+And plug-in your device again. The reference is [here](https://bugs.launchpad.net/ubuntu/+source/gvfs/+bug/1314556).
 
 ## Credits
 * [eyeD3](http://eyed3.nicfit.net/), Python audio data toolkit.
