@@ -73,26 +73,30 @@ def upload(audiolist, device, srcdir, dstdir):
     dev = device.open()
     success_num = 0
 
-    pbar = tqdm.tqdm(audiolist)
+    pbar = tqdm.tqdm(audiolist) if OPTS.action else audiolist
     for audio in pbar:
         srcpath = os.path.join(srcdir, audio['path'])
         dstpath = os.path.join(dstdir, audio['path'])
-        pbar.set_description(dstpath)
+        if OPTS.action:
+            pbar.set_description(dstpath)
 
         existed = dev.get_descendant_by_path(dstpath)
         if OPTS.force == 1 and existed is None:
             OPTS.force = 2
-        elif OPTS.force == 2 and existed is not None:
+        elif OPTS.force == 2 and OPTS.action and existed is not None:
             existed.delete()
-        elif existed is not None:
+        elif OPTS.force != 2 and existed is not None:
             continue
 
-        curr = dev
-        for folder in dstpath.split('/')[1:-1]:
-            nex4 = curr.get_child_by_name(folder)
-            curr = curr.create_folder(folder) if nex4 is None else nex4
-
-        if curr.send_file(srcpath) is not None:
+        if OPTS.action:
+            curr = dev
+            for folder in dstpath.split('/')[1:-1]:
+                nex4 = curr.get_child_by_name(folder)
+                curr = curr.create_folder(folder) if nex4 is None else nex4
+            if curr.send_file(srcpath) is not None:
+                success_num += 1
+        else:
+            print('{}: {}'.format(success_num + 1, dstpath))
             success_num += 1
 
     dev.close()
@@ -112,7 +116,7 @@ def main():
                       type='string', dest='sort', default='bGYAn',
                       help='order of sorting criteria [default: bGYAn]')
     parser.add_option('-n', '--no-action',
-                      action='store_true', dest='display',
+                      action='store_false', dest='action', default=True,
                       help='print the order of the files, but not upload them')
     parser.add_option('-f', '--force-after',
                       action='store_const', const=1, dest='force',
