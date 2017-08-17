@@ -133,7 +133,7 @@ def main():
         parser.error('DEVICE_DIR should be start with “mtp:/” as its root')
     else:
         srcdir = os.path.expanduser(ARGS[0])
-        dstdir = ARGS[1][4:]
+        dstdir = ARGS[1][5:]
 
     audiolist = search_audios(srcdir)
     device = choose_device()

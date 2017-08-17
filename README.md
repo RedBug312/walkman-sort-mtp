@@ -16,7 +16,7 @@ $ ./upload.py [options] <SOURCE_DIR> <DEVICE_DIR>
 Note that `<DEVICE_DIR>` should be started with `mtp:/` as its root directory.
 
 Options:
-* `-s`, `--sort`: order of sorting criteria [default: bGYAn]
+* `-s`, `--sort`: order of sorting criteria [default: `bGYAn`]
 * `-n`, `--no`: print the order of the files, but not upload them
 * `-f`, `--force-after`: overwrite songs on device after new songs uploaded
 * `-F`, `--force-all`: overwrite all songs on device
@@ -32,15 +32,15 @@ Sorting criteria: (the same as eyeD3)
 * `D`: total number of discs in set
 * `G`: genre id
 * `Y`: releasing year
-* `-`: reverse the order of previous criteria
+* `-`: reverse the order of previous criterion
 
 You can run `$ ./upload.py --help` for a more detailed options explaination.
 
 Demo:
 [![asciicast](https://asciinema.org/a/0IvJu8h9RHpYABqFgamSFEBQt.png)](https://asciinema.org/a/0IvJu8h9RHpYABqFgamSFEBQt)
 
-## FAQ
-### I get `PTP_ERROR_IO` error with the messages below:
+## Troubleshooting
+### get `PTP_ERROR_IO` error with the messages below:
 ```
 ignoring libusb_claim_interface() = -6PTP_ERROR_IO: failed to open session, trying again after resetting USB interface
 LIBMTP libusb: Attempt to reset device
@@ -55,7 +55,7 @@ Try this in a terminal:
 $ killall gvfs-gphoto2-volume-monitor
 $ killall gvfs-mtp-volume-monitor
 ```
-And plug-in your device again. The reference is [here](https://bugs.launchpad.net/ubuntu/+source/gvfs/+bug/1314556).
+And plug-in your device again. Referenced [here](https://bugs.launchpad.net/ubuntu/+source/gvfs/+bug/1314556).
 
 ## Credits
 * [eyeD3](http://eyed3.nicfit.net/), Python audio data toolkit.
