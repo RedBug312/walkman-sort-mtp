@@ -1,6 +1,10 @@
 # walkman-sort-mtp
 A python script to upload sorted MP3 audio files via MTP
 
+**[UPDATE]** This repository is deprecated. [gMTP][gmtp] is recommended as the alternative.
+
+[gmtp]: https://gmtp.sourceforge.io/
+
 ## Intro
 My Walkman MP3 player (Sony NWZ-B163F) failed reading ID3 tags, the songs inside can only be sorted as uploading order. I have to upload them one-by-one since Bash script does not work on MTP.
 
